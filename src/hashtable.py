@@ -7,15 +7,16 @@ class LinkedPair:
         self.value = value
         self.next = None
 
+
 class HashTable:
     '''
     A hash table that with `capacity` buckets
     that accepts string keys
     '''
+
     def __init__(self, capacity):
         self.capacity = capacity  # Number of buckets in the hash table
         self.storage = [None] * capacity
-
 
     def _hash(self, key):
         '''
@@ -25,7 +26,6 @@ class HashTable:
         '''
         return hash(key)
 
-
     def _hash_djb2(self, key):
         '''
         Hash an arbitrary key using DJB2 hash
@@ -34,14 +34,12 @@ class HashTable:
         '''
         pass
 
-
     def _hash_mod(self, key):
         '''
         Take an arbitrary key and return a valid integer index
         within the storage capacity of the hash table.
         '''
         return self._hash(key) % self.capacity
-
 
     def insert(self, key, value):
         '''
@@ -51,9 +49,22 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        index = self._hash_mod(key)
+        node = self.storage[index]
 
+        if node is None or node.key == key:
+            self.storage[index] = LinkedPair(key, value)
+            return
 
+        last_node = node
+        while node is not None:
+            last_node = node
+            if last_node.key == key:
+                last_node.value = value
+                return
+            node = node.next
+
+        last_node.next = LinkedPair(key, value)
 
     def remove(self, key):
         '''
@@ -63,8 +74,14 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        index = self._hash_mod(key)
+        node = self.storage[index]
 
+        if node is None:
+            print("The key is not found. Remove operation can not be performed.")
+            return
+
+        self.storage[index] = None
 
     def retrieve(self, key):
         '''
@@ -74,8 +91,22 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        index = self._hash_mod(key)
+        node = self.storage[index]
 
+        if node is None:
+            print("The key is not found. Remove operation can not be performed.")
+            return
+
+        if node.key == key:
+            return node.value
+
+        last_node = node
+        while node is not None:
+            last_node = node
+            if last_node.key == key:
+                return last_node.value
+            node = node.next
 
     def resize(self):
         '''
@@ -84,8 +115,13 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        self.capacity = self.capacity * 2
+        new_storage = [None] * self.capacity
 
+        for i in range(len(self.storage) - 1):
+            new_storage[i] = self.storage[i]
+
+        self.storage = new_storage
 
 
 if __name__ == "__main__":
